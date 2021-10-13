@@ -4,18 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
+    protected $rules = [
+        'name' => 'required|max:255',
+        'is_active' => 'boolean',
+        'description' => 'nullable'
+    ];
 
     public function index()
     {
         return Category::all();
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function store(Request $request)
     {
-        return Category::create($request->all());
+        $data = $this->validate($request, $this->rules);
+        $category = Category::create($data);
+        $category->refresh();
+        return $category;
     }
 
     public function show(Category $category): Category
@@ -25,7 +37,8 @@ class CategoryController extends Controller
 
     public function update(Request $request, Category $category): Category
     {
-        $category->update($request->all());
+        $data = $this->validate($request, $this->rules);
+        $category->update($data);
         return $category;
     }
 
