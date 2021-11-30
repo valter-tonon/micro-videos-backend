@@ -6,7 +6,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-class CategoryController extends Controller
+class CategoryController extends BasicCrudController
 {
     protected $rules = [
         'name' => 'required|max:255',
@@ -14,37 +14,20 @@ class CategoryController extends Controller
         'description' => 'nullable'
     ];
 
-    public function index()
+
+    protected function model(): string
     {
-        return Category::all();
+        return Category::class;
     }
 
-    /**
-     * @throws ValidationException
-     */
-    public function store(Request $request)
+    protected function rulesStore(): array
     {
-        $data = $this->validate($request, $this->rules);
-        $category = Category::create($data);
-        $category->refresh();
-        return $category;
+        return $this->rules;
     }
 
-    public function show(Category $category): Category
+    protected function rulesUpdate(): array
     {
-        return $category;
+        return $this->rules;
     }
 
-    public function update(Request $request, Category $category): Category
-    {
-        $data = $this->validate($request, $this->rules);
-        $category->update($data);
-        return $category;
-    }
-
-    public function destroy(Category $category): \Illuminate\Http\Response
-    {
-        $category->delete();
-        return response()->noContent();
-    }
 }
