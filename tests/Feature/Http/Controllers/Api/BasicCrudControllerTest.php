@@ -3,15 +3,9 @@
 namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Http\Controllers\BasicCrudController;
-use App\Models\Category;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Tests\Feature\Traits\TestSaves;
-use Tests\Feature\Traits\TestValidations;
 use Tests\Stubs\Controllers\CategoryControllerStub;
 use Tests\Stubs\Model\CategoryStub;
 use Tests\TestCase;
@@ -91,4 +85,36 @@ class BasicCrudControllerTest extends TestCase
         $reflectionMethod->invokeArgs($this->controller, [0]);
 
     }
+
+    public function testShow()
+    {
+        $category = CategoryStub::create(['name' => 'teste', 'description' => 'teste_description']);
+        $result = $this->controller->show($category->id);
+        $this->assertEquals($category->toArray(), $result->toArray());
+    }
+
+    public function testUpdate()
+    {
+        $category = CategoryStub::create(['name' => 'teste', 'description' => 'teste_description']);
+        $request = \Mockery::mock(Request::class);
+        $request
+            ->shouldReceive('all')
+            ->once()
+            ->andReturn(['name' => 'teste_update', 'description' => 'teste_description_update']);
+        $result = $this->controller->update($request, $category->id);
+        $this->assertEquals(CategoryStub::find(1)->toArray(), $result->toArray());
+        $this->assertEquals('teste_update', $result->name);
+        $this->assertEquals('teste_description_update', $result->description);
+    }
+
+    public function testDelete()
+    {
+        $category = CategoryStub::create(['name' => 'teste', 'description' => 'teste_description']);
+        $result = $this->controller->destroy($category->id);
+        $this->createTestResponse($result)
+            ->assertStatus(204);
+        $this->assertNull(CategoryStub::find($category->id));
+
+    }
+
 }

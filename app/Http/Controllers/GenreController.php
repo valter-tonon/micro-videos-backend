@@ -6,7 +6,7 @@ use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-class GenreController extends Controller
+class GenreController extends BasicCrudController
 {
 
     protected $rules = [
@@ -14,40 +14,19 @@ class GenreController extends Controller
         'is_active' => 'boolean'
     ];
 
-    public function index()
+
+    protected function model(): string
     {
-        return Genre::all();
+        return Genre::class;
     }
 
-    /**
-     * @throws ValidationException
-     */
-    public function store(Request $request)
+    protected function rulesStore(): array
     {
-        $data = $this->validate($request, $this->rules);
-        $genre = Genre::create($data);
-        $genre->refresh();
-        return $genre;
+        return $this->rules;
     }
 
-    public function show(Genre $genre): Genre
+    protected function rulesUpdate(): array
     {
-        return $genre;
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    public function update(Request $request, Genre $genre): Genre
-    {
-        $data = $this->validate($request, $this->rules);
-        $genre->update($data);
-        return $genre;
-    }
-
-    public function destroy(Genre $genre): \Illuminate\Http\Response
-    {
-        $genre->delete();
-        return response()->noContent();
+        return $this->rules;
     }
 }

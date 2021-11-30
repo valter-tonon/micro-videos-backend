@@ -20,4 +20,12 @@ class CategoryControllerStub extends BasicCrudController
             'description' => 'nullable',
         ];
     }
+
+    protected function rulesUpdate()
+    {
+        return [
+            'name' => 'required|min:3|max:255',
+            'description' => 'nullable',
+        ];
+    }
 }

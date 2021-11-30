@@ -22,4 +22,6 @@ Route::group(['prefix' => 'v1'], function(){
 
     Route::resource('categories', 'CategoryController', $except);
     Route::resource('genres', 'GenreController', $except);
+    Route::resource('cast_members', 'CastMemberController', $except);
+    Route::resource('videos', 'VideoController', $except);
 });
